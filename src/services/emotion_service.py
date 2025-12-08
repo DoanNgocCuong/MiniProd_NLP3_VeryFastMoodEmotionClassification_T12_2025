@@ -9,7 +9,8 @@ from ..prompts import emotion_prompt
 
 
 class EmotionService:
-    def __init__(self, client: AsyncGroqClient | None = None):
+    def __init__(self, client=None):
+        # Avoid type-annotated DI params that FastAPI/Pydantic would treat as fields
         self.client = client or AsyncGroqClient()
         self.settings = get_settings()
 
@@ -17,9 +18,7 @@ class EmotionService:
         start = time.perf_counter()
 
         system_prompt = emotion_prompt.SYSTEM_PROMPT
-        user_prompt = emotion_prompt.build_user_prompt(
-            request.user_last_message, request.pika_response
-        )
+        user_prompt = emotion_prompt.build_user_prompt(request.input)
 
         content = await self.client.complete(
             system_prompt=system_prompt,

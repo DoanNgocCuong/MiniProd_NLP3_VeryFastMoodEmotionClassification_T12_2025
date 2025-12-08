@@ -10,9 +10,10 @@ from .emotion_service import EmotionService
 class CombinedService:
     def __init__(
         self,
-        emotion_service: EmotionService | None = None,
-        celebrate_service: CelebrateService | None = None,
+        emotion_service=None,
+        celebrate_service=None,
     ):
+        # Avoid type-annotated DI params that FastAPI/Pydantic would try to treat as fields
         self.emotion_service = emotion_service or EmotionService()
         self.celebrate_service = celebrate_service or CelebrateService()
 

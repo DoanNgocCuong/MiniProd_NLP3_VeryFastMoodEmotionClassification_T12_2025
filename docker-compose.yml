@@ -1,4 +1,4 @@
-version: "3.11"
+name: robot-mood-classification-service
 services:
   api:
     build: .
@@ -11,12 +11,11 @@ services:
       - DEBUG=${DEBUG:-false}
     ports:
       - "30031:30031"
-
+    networks:
+      - robot_mood_classification
 networks:
-  name-network:               # tên mạng bạn tạo
-    driver: bridge              # kiểu mạng: bridge (mặc định của Docker)
-    ipam:                       # IP Address Management - quản lý dải IP
-      driver: default
+  robot_mood_classification:
+    driver: bridge
+    ipam:
       config:
-        - subnet: 10.200.0.0/24 # dải mạng (CIDR) dùng cho network này
-          gateway: 10.200.0.1   # địa chỉ gateway (cổng mặc định) của network
+        - subnet: 10.250.0.0/24
