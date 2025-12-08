@@ -29,7 +29,7 @@ echo -e "\n${YELLOW}[1/3] Checking GPU ${GPU_ID} availability...${NC}"
 FREE_MEM=$(nvidia-smi -i $GPU_ID --query-gpu=memory.free --format=csv,noheader,nounits)
 echo "GPU ${GPU_ID} Free Memory: ${FREE_MEM} MiB"
 
-if [ "$FREE_MEM" -lt 8000 ]; then
+if [ "$FREE_MEM" -lt 30031 ]; then
     echo -e "${RED}WARNING: GPU ${GPU_ID} has less than 8GB free!${NC}"
     echo "Consider changing GPU_ID in this script."
 fi

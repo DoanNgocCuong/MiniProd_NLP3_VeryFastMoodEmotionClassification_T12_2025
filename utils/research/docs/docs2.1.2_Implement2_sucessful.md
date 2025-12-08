@@ -1,3 +1,4 @@
+```
 #!/bin/bash
 # ============================================================
 # DEPLOY PHI-3-MINI EMOTION CLASSIFIER - RTX 3090 Server
@@ -30,7 +31,7 @@ echo -e "\n${YELLOW}[1/5] Checking GPU ${GPU_ID} availability...${NC}"
 FREE_MEM=$(nvidia-smi -i $GPU_ID --query-gpu=memory.free --format=csv,noheader,nounits)
 echo "GPU ${GPU_ID} Free Memory: ${FREE_MEM} MiB"
 
-if [ "$FREE_MEM" -lt 8000 ]; then
+if [ "$FREE_MEM" -lt 30031 ]; then
     echo -e "${RED}WARNING: GPU ${GPU_ID} has less than 8GB free!${NC}"
     echo "Consider changing GPU_ID in this script."
 fi
@@ -113,3 +114,68 @@ CUDA_VISIBLE_DEVICES=$GPU_ID python -m vllm.entrypoints.openai.api_server \
     --enable-prefix-caching \
     --trust-remote-code \
     2>&1 | tee phi3_server.log
+```
+
+
+----
+```bash
+curl --location 'http://103.253.20.30:30030/v1/chat/completions' \
+--header 'Content-Type: application/json' \
+--data '{
+    "model": "microsoft/Phi-3-mini-4k-instruct",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a Mood & Celebrate Tagger. Output JSON only.\n\nRules:\n- celebrate=\"yes\" ONLY if confirming a FACTUAL answer is correct\n- celebrate=\"no\" for opinions, ideas, wrong answers\n\nTags: happy, excited, proud, encouraging, curious, surprised, calm, playful, thats_right, sad, worry, thinking\n\nFormat: {\"emotion_name\": \"<tag>\", \"celebrate\": \"yes\"|\"no\"}"
+      },
+      {
+        "role": "user", 
+        "content": "user_last_message: \"Thủ đô của Việt Nam là Hà Nội ạ!\"\npika_response: \"Chính xác! Con giỏi lắm! Hà Nội đúng là thủ đô của nước ta.\"\nOutput:"
+      }
+    ],
+    "temperature": 0,
+    "max_tokens": 50
+  }'
+```
+
+```bash
+{
+    "id": "chatcmpl-9ef134a40641a940",
+    "object": "chat.completion",
+    "created": 1765169303,
+    "model": "microsoft/Phi-3-mini-4k-instruct",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": " {\"emotion_name\": \"proud\", \"celebrate\": \"yes\"}",
+                "refusal": null,
+                "annotations": null,
+                "audio": null,
+                "function_call": null,
+                "tool_calls": [],
+                "reasoning": null,
+                "reasoning_content": null
+            },
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": 32007,
+            "token_ids": null
+        }
+    ],
+    "service_tier": null,
+    "system_fingerprint": null,
+    "usage": {
+        "prompt_tokens": 196,
+        "total_tokens": 216,
+        "completion_tokens": 20,
+        "prompt_tokens_details": null
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "kv_transfer_params": null
+}
+```
+
+response time = 300ms
