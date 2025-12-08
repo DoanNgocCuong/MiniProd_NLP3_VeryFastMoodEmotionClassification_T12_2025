@@ -1,4 +1,3 @@
-```
 #!/bin/bash
 # ============================================================
 # RUN SMOLLM2-135M EMOTION CLASSIFIER - Ultra Fast Tiny Model
@@ -23,9 +22,9 @@ VENV_DIR="$HOME/venv_phi3"  # Tái sử dụng venv cũ
 GPU_ID=0
 PORT=30030
 MODEL_NAME="HuggingFaceTB/SmolLM2-135M-Instruct"  # ⚡ TINY MODEL
-GPU_MEMORY_UTIL=0.15  # Chỉ cần 15% VRAM (~1.8GB)
-MAX_MODEL_LEN=2048
-MAX_NUM_SEQS=128      # Tăng batch size vì model nhỏ
+GPU_MEMORY_UTIL=0.3  # Chỉ cần 15% VRAM (~1.8GB)
+MAX_MODEL_LEN=512
+MAX_NUM_SEQS=512      # Tăng batch size vì model nhỏ
 
 
 # Step 1: Check GPU
@@ -114,72 +113,3 @@ CUDA_VISIBLE_DEVICES=$GPU_ID python -m vllm.entrypoints.openai.api_server \
 #     --enable-prefix-caching \
 #     --trust-remote-code \
 #     2>&1 | tee "$LOG_FILE"
-
-```
-
-
-```
-curl --location 'http://103.253.20.30:30030/v1/chat/completions' \
---header 'Content-Type: application/json' \
---data '{
-    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
-    "messages":  [
-        {
-            "role": "system",
-            "content": "You are now intention detection. Given user'\''s input, detect the suitable emotion and the need of celebrate for it.\nUser input in format\nprevious Question: string\nprevious Answer: string\nResponse to check: string to check\n\nYou will extract the '\''Response to check'\'' and check:\n\n1. For emotion, pick from the list below:\n- happy, happy_2: when intention about happiness\n- calm: when intentionis to comfort\n- excited, excited_2: when expressing the exciting emotion\n- playful,playful_2,playful_3: intention about playing some fun activity\n- no_problem: intention when telling something is fine\n- encouraging,encouraging_2: intention when tell to try to do something\n- curious: intention when show curiousity\n- surprised: when being shocked or surprised\n- proud,proud_2: when showing proud\n- thats_right, thats_right_2: when telling something is correct\n- sad: when sad\n- angry: showing anger\n- worry: when show worriness\n- afraid: when feel scared\n- noisy: When intention about can'\''t hear properly\n- thinking: intention about thinking\n\n2. For learn_score, if related to english learning\n- true: if question is about english learning, repeating something, and answer correctly\n- false: for other case include positive and negative\n\n\n return in single line json format.\n{\"emotion\":\"<emotion name>\",\"learn_score\":true/flase}"
-        },
-        {
-            "role": "user",
-            "content": "Previous Question: Tớ buồn quá. \nPrevious Answer: i think a yummy\nResponse to check: Nghe vui quá! Bể Hả, cậu có muốn chơi trò kể tên các loại trái cây bằng tiếng Anh không? Name fruits in English!"
-        }
-    ],
-    "temperature": 0,
-    "max_tokens": 50
-  }'
-```
-
-
-```
-{
-    "id": "chatcmpl-8ca7b299c9702fde",
-    "object": "chat.completion",
-    "created": 1765172321,
-    "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
-    "choices": [
-        {
-            "index": 0,
-            "message": {
-                "role": "assistant",
-                "content": "\"Tớ buồn quá. Nghe vui quá!\" Bể Hả, cậu có muốn chơi trò kể tên các",
-                "refusal": null,
-                "annotations": null,
-                "audio": null,
-                "function_call": null,
-                "tool_calls": [],
-                "reasoning": null,
-                "reasoning_content": null
-            },
-            "logprobs": null,
-            "finish_reason": "length",
-            "stop_reason": null,
-            "token_ids": null
-        }
-    ],
-    "service_tier": null,
-    "system_fingerprint": null,
-    "usage": {
-        "prompt_tokens": 428,
-        "total_tokens": 478,
-        "completion_tokens": 50,
-        "prompt_tokens_details": null
-    },
-    "prompt_logprobs": null,
-    "prompt_token_ids": null,
-    "kv_transfer_params": null
-}
-```
-
-Ket qua 170ms ()
-
-Thấp hơn qwen0.6B = 50-80ms tren H100, tren cung server là 150ms
-va thap hon Groq oss-20b/120b gpt mà có 150ms
