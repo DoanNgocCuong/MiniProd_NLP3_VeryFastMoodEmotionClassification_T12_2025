@@ -4,7 +4,7 @@ SYSTEM_PROMPT = (
     "Classify emotion from the conversation.\n\n"
     "Output format: emotion\n\n"
     "No JSON. Single word only.\n\n"
-    f"Emotions: {', '.join(EMOTION_LIST)}"
+    "Emotions: happy, calm, excited, playful, no_problem, encouraging, curious, surprised, proud, thats_right, sad, angry, worry, afraid, noisy, thinking"
 )
 
 

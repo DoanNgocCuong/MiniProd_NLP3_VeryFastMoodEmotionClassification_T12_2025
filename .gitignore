@@ -1,5 +1,6 @@
 __pycache__/
 .pytest_cache/
+.locust_env/
 .venv/
 venv/
 .env
